@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoring Sungai Bandar Lampung</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 25px 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slideDown 0.5s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .header-left h1 {
+            color: #2d3748;
+            font-size: 1.8em;
+            margin-bottom: 5px;
+        }
+        
+        .header-subtitle {
+            color: #718096;
+            font-size: 0.9em;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .user-info {
+            text-align: right;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .user-role {
+            font-size: 0.85em;
+            color: #718096;
+        }
+        
+        .logout-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            transition: all 0.3s;
+            animation: fadeInUp 0.6s ease;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+        
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        
+        .stat-icon.blue { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .stat-icon.green { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+        .stat-icon.orange { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .stat-icon.purple { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 10px 0;
+        }
+        
+        .stat-label {
+            color: #718096;
+            font-size: 0.95em;
+            font-weight: 500;
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+        }
+        
+        .panel {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            animation: fadeInUp 0.8s ease;
+        }
+        
+        .panel h2 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+            font-size: 1.4em;
+        }
+        
+        .sensor-item {
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #f6f9fc 0%, #ffffff 100%);
+            transition: all 0.3s;
+        }
+        
+        .sensor-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
+            transform: translateX(5px);
+        }
+        
+        .sensor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        
+        .sensor-info h4 {
+            color: #2d3748;
+            font-size: 1.2em;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .location-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.75em;
+            font-weight: 600;
+        }
+        
+        .sensor-details {
+            font-size: 0.9em;
+            color: #718096;
+            line-height: 1.6;
+        }
+        
+        .status-online {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 12px;
+            background: #c6f6d5;
+            color: #22543d;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        
+        .status-offline {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 12px;
+            background: #fed7d7;
+            color: #742a2a;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-dot.online { background: #48bb78; }
+        .status-dot.offline { background: #f56565; }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .sensor-values {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .value-item {
+            text-align: center;
+            padding: 12px;
+            background: #f7fafc;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+        
+        .value-item:hover {
+            background: #edf2f7;
+            transform: scale(1.05);
+        }
+        
+        .value-label {
+            font-size: 0.8em;
+            color: #718096;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        
+        .value-number {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #2d3748;
+        }
+        
+        .reading-item {
+            padding: 15px;
+            margin-bottom: 12px;
+            border-left: 4px solid #667eea;
+            background: linear-gradient(90deg, #f7fafc 0%, #ffffff 100%);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .reading-item:hover {
+            background: #f7fafc;
+            transform: translateX(5px);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .reading-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .reading-sensor {
+            font-weight: 600;
+            color: #667eea;
+        }
+        
+        .reading-time {
+            font-size: 0.85em;
+            color: #718096;
+        }
+        
+        .reading-values {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .status-good { color: #48bb78; }
+        .status-warning { color: #f6ad55; }
+        .status-danger { color: #f56565; }
+        
+        .alert-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .alert-safe { background: #c6f6d5; color: #22543d; }
+        .alert-warning { background: #feebc8; color: #7c2d12; }
+        .alert-danger { background: #fed7d7; color: #742a2a; }
+        .alert-critical { background: #fc8181; color: #fff; }
+        
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #a0aec0;
+        }
+        
+        .no-data-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+            opacity: 0.5;
+        }
+        
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            .header-right {
+                flex-direction: column;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+            
+            .sensor-values {
+                grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-left">
+                <h1>🌊 Monitoring Sungai Bandar Lampung</h1>
+                <div class="header-subtitle">Sistem Pemantauan Debit Air Real-time</div>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <div class="user-name">{{ user.get_full_name|default:user.username }}</div>
+                    <div class="user-role">Administrator</div>
+                </div>
+                <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon blue">📡</div>
+                <div class="stat-number">{{ total_sensors }}</div>
+                <div class="stat-label">Total Sensor Aktif</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green">📊</div>
+                <div class="stat-number">{{ total_readings }}</div>
+                <div class="stat-label">Pembacaan (24 jam)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon orange">💧</div>
+                <div class="stat-number">{{ stats_24h.avg_flow|floatformat:2|default:"0.00" }}</div>
+                <div class="stat-label">Rata-rata Debit (m³/s)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon purple">🔋</div>
+                <div class="stat-number">{{ stats_24h.avg_battery|floatformat:1|default:"0.0" }}%</div>
+                <div class="stat-label">Rata-rata Baterai</div>
+            </div>
+        </div>
+
+        <div class="content-grid">
+            <!-- Sensor Status -->
+            <div class="panel">
+                <h2>📍 Status Sensor Sungai</h2>
+                {% for stat in sensor_stats %}
+                    <div class="sensor-item">
+                        <div class="sensor-header">
+                            <div class="sensor-info">
+                                <h4>
+                                    {{ stat.sensor.name }}
+                                    <span class="location-badge">
+                                        {% if "Kedaton" in stat.sensor.name %}
+                                            Kedaton
+                                        {% elif "Rajabasa" in stat.sensor.name %}
+                                            Rajabasa
+                                        {% elif "Kemiling" in stat.sensor.name %}
+                                            Kemiling
+                                        {% elif "Campang" in stat.sensor.name %}
+                                            Campang Raya
+                                        {% else %}
+                                            {{ stat.sensor.location|default:"Bandar Lampung" }}
+                                        {% endif %}
+                                    </span>
+                                </h4>
+                                <div class="sensor-details">
+                                    📌 Lokasi: {{ stat.sensor.location|default:"Bandar Lampung, Lampung" }}<br>
+                                    🆔 ID Sensor: {{ stat.sensor.identifier }}<br>
+                                    📈 Pembacaan 24 jam: <strong>{{ stat.readings_24h }}</strong> kali
+                                </div>
+                            </div>
+                            {% if stat.latest_reading %}
+                                <div class="status-online">
+                                    <span class="status-dot online"></span>
+                                    Online
+                                </div>
+                            {% else %}
+                                <div class="status-offline">
+                                    <span class="status-dot offline"></span>
+                                    Offline
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        {% if stat.latest_reading %}
+                            <div class="sensor-values">
+                                {% if stat.latest_reading.flow_rate %}
+                                    <div class="value-item">
+                                        <div class="value-label">💧 Debit Air</div>
+                                        <div class="value-number">{{ stat.latest_reading.flow_rate|floatformat:2 }}</div>
+                                        <div class="value-label" style="font-size: 0.7em; margin-top: 2px;">m³/s</div>
+                                    </div>
+                                {% endif %}
+                                
+                                {% if stat.latest_reading.distance %}
+                                    <div class="value-item">
+                                        <div class="value-label">📏 Ketinggian</div>
+                                        <div class="value-number">{{ stat.latest_reading.distance|floatformat:1 }}</div>
+                                        <div class="value-label" style="font-size: 0.7em; margin-top: 2px;">cm</div>
+                                    </div>
+                                {% endif %}
+                                
+                                {% if stat.latest_reading.battery %}
+                                    <div class="value-item">
+                                        <div class="value-label">🔋 Baterai</div>
+                                        <div class="value-number {% if stat.latest_reading.battery > 80 %}status-good{% elif stat.latest_reading.battery > 50 %}status-warning{% else %}status-danger{% endif %}">
+                                            {{ stat.latest_reading.battery|floatformat:1 }}%
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                
+                                {% if stat.latest_reading.alert_level %}
+                                    <div class="value-item">
+                                        <div class="value-label">⚠️ Status</div>
+                                        <span class="alert-badge alert-{{ stat.latest_reading.alert_level }}">
+                                            {{ stat.latest_reading.get_alert_level_display|default:stat.latest_reading.alert_level }}
+                                        </span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <div class="no-data">
+                                <div class="no-data-icon">📭</div>
+                                <div>Tidak ada data pembacaan</div>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% empty %}
+                    <div class="no-data">
+                        <div class="no-data-icon">🔍</div>
+                        <div>Belum ada sensor yang terdaftar.</div>
+                        <div style="margin-top: 10px; font-size: 0.9em;">
+                            Silakan tambahkan sensor melalui admin panel.
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Recent Readings -->
+            <div class="panel">
+                <h2>📋 Pembacaan Terbaru</h2>
+                {% for reading in recent_readings %}
+                    <div class="reading-item">
+                        <div class="reading-header">
+                            <span class="reading-sensor">{{ reading.sensor.name }}</span>
+                            <span class="reading-time">⏰ {{ reading.timestamp|date:"d/m/Y H:i" }}</span>
+                        </div>
+                        <div class="reading-values">
+                            {% if reading.flow_rate %}
+                                <div class="value-item">
+                                    <div class="value-label">Debit</div>
+                                    <div class="value-number">{{ reading.flow_rate|floatformat:2 }} m³/s</div>
+                                </div>
+                            {% endif %}
+                            {% if reading.distance %}
+                                <div class="value-item">
+                                    <div class="value-label">Jarak</div>
+                                    <div class="value-number">{{ reading.distance|floatformat:1 }} cm</div>
+                                </div>
+                            {% endif %}
+                            {% if reading.battery %}
+                                <div class="value-item">
+                                    <div class="value-label">Baterai</div>
+                                    <div class="value-number {% if reading.battery > 80 %}status-good{% elif reading.battery > 50 %}status-warning{% else %}status-danger{% endif %}">
+                                        {{ reading.battery|floatformat:1 }}%
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                        {% if reading.alert_level and reading.alert_level != 'safe' %}
+                            <div style="margin-top: 8px;">
+                                <span class="alert-badge alert-{{ reading.alert_level }}">
+                                    {{ reading.get_alert_level_display|default:reading.alert_level }}
+                                </span>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% empty %}
+                    <div class="no-data">
+                        <div class="no-data-icon">📊</div>
+                        <div>Belum ada pembacaan terbaru.</div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auto refresh every 30 seconds
+        setTimeout(function() {
+            location.reload();
+        }, 30000);
+    </script>
+</body>
+</html>

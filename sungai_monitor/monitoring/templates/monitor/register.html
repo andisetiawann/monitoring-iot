@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Register - IoT Monitoring</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .success {
+            color: green;
+            margin-bottom: 10px;
+        }
+        .error {
+            color: red;
+            margin-bottom: 10px;
+        }
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Daftar Akun Baru</h2>
+
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'success' %}
+                <div class="success">{{ message }}</div>
+            {% else %}
+                <div class="error">{{ message }}</div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="id_username">Username:</label>
+            {{ form.username }}
+            {% if form.username.errors %}
+                <div class="error">{{ form.username.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="id_password1">Password:</label>
+            {{ form.password1 }}
+            {% if form.password1.errors %}
+                <div class="error">{{ form.password1.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="id_password2">Konfirmasi Password:</label>
+            {{ form.password2 }}
+            {% if form.password2.errors %}
+                <div class="error">{{ form.password2.errors.0 }}</div>
+            {% endif %}
+        </div>
+
+        <button type="submit">Daftar</button>
+    </form>
+
+    <div class="login-link">
+        <p>Sudah punya akun? <a href="{% url 'login' %}">Login di sini</a></p>
+    </div>
+</body>
+</html>
